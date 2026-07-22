@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('AppResolver (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -15,10 +15,15 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('helloWorld query (POST /graphql)', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .post('/graphql')
+      .send({ query: '{ helloWorld }' })
       .expect(200)
-      .expect('Hello World!');
+      .expect({ data: { helloWorld: 'Hello World!' } });
   });
 });
